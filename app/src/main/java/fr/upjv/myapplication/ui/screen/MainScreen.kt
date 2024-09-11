@@ -14,7 +14,9 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun MainScreen(
     onButtonClick: () -> Unit,
-) {
+    onButton2Click: () -> Unit,
+
+    ) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -32,6 +34,15 @@ fun MainScreen(
         ) {
             Text("Go to list screen")
         }
+
+
+        Button(
+            content = {
+                Text("go to quote screen")
+            },
+            onClick = { onButton2Click() }
+        )
+
     }
 }
 

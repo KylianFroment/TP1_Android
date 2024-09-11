@@ -1,9 +1,11 @@
 package fr.upjv.myapplication.ui.screen
 
+import android.content.ClipData.Item
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -13,6 +15,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -22,6 +25,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -29,17 +33,23 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import fr.upjv.myapplication.ui.model.ItemUi
 import fr.upjv.myapplication.ui.theme.theme.DarkBluePSG
+import fr.upjv.myapplication.ui.viewmodel.AndroidVersionViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ListScreen(
     navController: NavController,
 ) {
+    val viewModel: AndroidVersionViewModel = viewModel()
+    val list = viewModel.androidVersionList.collectAsState(emptyList()).value
+    //val listOfResult = viewModel.androidVersionList.collectAsState().value
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -50,68 +60,49 @@ fun ListScreen(
                     }
                 }
             )
+        },
+        bottomBar = {
+            Row (modifier = Modifier.fillMaxWidth()) {
+                Button(
+                    modifier = Modifier.weight(1f),
+                    content = {
+                        Text("Add")
+                    },
+                    onClick = {
+                        viewModel.insertPlayer()  // Call the function to add a new player
+                    }
+                )
+                Button(
+                    modifier = Modifier.weight(1f),
+                    content = {
+                        Text("Delete")
+                    },
+                    onClick = {
+                        viewModel.DeleteAllPlayer()  // Call the function to delete all players
+                    }
+                )
+            }
         }
     ) { padding ->
         Column {
-        Text(
-            modifier = Modifier.padding(padding),
-            text = "Second screen",
-        )
-        MyScreen2()
+            Text(
+                modifier = Modifier.padding(padding),
+                text = "Second screen",
+            )
+            // Pass the list of items to MyScreen2
+            MyScreen2(list)
         }
     }
 }
 
-val playerGroups = populateMyList()
-    .groupBy { it.playerPosition } // regroupe les joueurs par position
-    .map { ItemUi.PlayerGroup(position = it.key, players = it.value) } // On crée une liste de PlayerGroup
-
-
-private fun populateMyList(): List<ItemUi.MyAndroidObject> {
-    return listOf(
-        ItemUi.MyAndroidObject(playerName = "Gianluigi Donnarumma", playerPosition = "Gardien", nationality = "Italie"),
-        ItemUi.MyAndroidObject(playerName = "Keylor Navas", playerPosition = "Gardien", nationality = "Costa Rica"),
-        ItemUi.MyAndroidObject(playerName = "Arnau Tenas", playerPosition = "Gardien", nationality = "Espagne"),
-        ItemUi.MyAndroidObject(playerName = "Alexandre Letellier", playerPosition = "Gardien", nationality = "France"),
-
-        ItemUi.MyAndroidObject(playerName = "Achraf Hakimi", playerPosition = "Défenseur", nationality = "Maroc"),
-        ItemUi.MyAndroidObject(playerName = "Milan Škriniar", playerPosition = "Défenseur", nationality = "Slovaquie"),
-        ItemUi.MyAndroidObject(playerName = "Marquinhos", playerPosition = "Défenseur", nationality = "Brésil"),
-        ItemUi.MyAndroidObject(playerName = "Lucas Hernandez", playerPosition = "Défenseur", nationality = "France"),
-        ItemUi.MyAndroidObject(playerName = "Presnel Kimpembe", playerPosition = "Défenseur", nationality = "France"),
-        ItemUi.MyAndroidObject(playerName = "Danilo Pereira", playerPosition = "Défenseur", nationality = "Portugal"),
-        ItemUi.MyAndroidObject(playerName = "Nordi Mukiele", playerPosition = "Défenseur", nationality = "France"),
-        ItemUi.MyAndroidObject(playerName = "Layvin Kurzawa", playerPosition = "Défenseur", nationality = "France"),
-        ItemUi.MyAndroidObject(playerName = "Juan Bernat", playerPosition = "Défenseur", nationality = "Espagne"),
-
-        ItemUi.MyAndroidObject(playerName = "Manuel Ugarte", playerPosition = "Milieu", nationality = "Uruguay"),
-        ItemUi.MyAndroidObject(playerName = "Vitinha", playerPosition = "Milieu", nationality = "Portugal"),
-        ItemUi.MyAndroidObject(playerName = "Warren Zaïre-Emery", playerPosition = "Milieu", nationality = "France"),
-        ItemUi.MyAndroidObject(playerName = "Carlos Soler", playerPosition = "Milieu", nationality = "Espagne"),
-        ItemUi.MyAndroidObject(playerName = "Fabián Ruiz", playerPosition = "Milieu", nationality = "Espagne"),
-        ItemUi.MyAndroidObject(playerName = "Cher Ndour", playerPosition = "Milieu", nationality = "Italie"),
-        ItemUi.MyAndroidObject(playerName = "Kang-In Lee", playerPosition = "Milieu", nationality = "Corée du Sud"),
-
-        ItemUi.MyAndroidObject(playerName = "Kylian Mbappé", playerPosition = "Attaquant", nationality = "France"),
-        ItemUi.MyAndroidObject(playerName = "Ousmane Dembélé", playerPosition = "Attaquant", nationality = "France"),
-        ItemUi.MyAndroidObject(playerName = "Gonçalo Ramos", playerPosition = "Attaquant", nationality = "Portugal"),
-        ItemUi.MyAndroidObject(playerName = "Marco Asensio", playerPosition = "Attaquant", nationality = "Espagne"),
-        ItemUi.MyAndroidObject(playerName = "Randal Kolo Muani", playerPosition = "Attaquant", nationality = "France"),
-        ItemUi.MyAndroidObject(playerName = "Bradley Barcola", playerPosition = "Attaquant", nationality = "France")
-    )
-}
 
 
 @Composable
-private fun MyScreen2() {
+private fun MyScreen2(playerGroups: List<ItemUi>) {
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background,
     ) {
-        val playerGroups = populateMyList()
-            .groupBy { it.playerPosition }
-            .map { ItemUi.PlayerGroup(position = it.key, players = it.value) }
-
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -122,19 +113,16 @@ private fun MyScreen2() {
             Text(
                 text = "Effectif PSG 2023/24",
                 modifier = Modifier.padding(8.dp),
-                fontSize = 24.sp, // Définit une taille de texte spécifique
-                fontWeight = FontWeight.Bold, // Met le texte en gras
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold,
             )
-
 
             // Image
             Column(
-                modifier = Modifier
-                    .padding(8.dp),
+                modifier = Modifier.padding(8.dp),
             ) {
                 val painter = rememberAsyncImagePainter(
-                    ImageRequest
-                        .Builder(LocalContext.current)
+                    ImageRequest.Builder(LocalContext.current)
                         .data(data = "https://logos-marques.com/wp-content/uploads/2020/10/PSG-Logo-1-768x480.png")
                         .build()
                 )
@@ -145,44 +133,50 @@ private fun MyScreen2() {
                 )
             }
 
-            // Liste des groupes
+            // Player groups
             LazyColumn(
                 modifier = Modifier.padding(vertical = 4.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 items(playerGroups) { group ->
-                    // Affichage du poste pour chaque groupe
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .background(DarkBluePSG, shape = RoundedCornerShape(15.dp))
-                            .padding(12.dp)
-                    ) {
-                        Text(
-                            text = group.position, // Affiche la position (Gardien, Défenseur, etc.)
-                            style = MaterialTheme.typography.displaySmall,
-                            color = Color.White,
-                            modifier = Modifier.align(Alignment.Center)
-                        )
-                    }
 
-                    // Affichage des joueurs de chaque groupe
-                    group.players.forEach { player ->
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(8.dp)
-                        ) {
-                            Text(
-                                text = "${player.playerName} (${player.nationality})",
-                                color = Color.Black
-
-                            )
+                    when(group) {
+                        is ItemUi.Header -> {
+                            // Display header
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .background(DarkBluePSG, shape = RoundedCornerShape(15.dp))
+                                    .padding(12.dp)
+                            ) {
+                                Text(
+                                    text = group.title, // Display the header title
+                                    style = MaterialTheme.typography.displaySmall,
+                                    color = Color.White,
+                                    modifier = Modifier.align(Alignment.Center)
+                                )
+                            }
                         }
+
+                        is ItemUi.Item -> {
+                            // Display each player's info
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(8.dp)
+                            ) {
+                                Text(
+                                    text = "${group.playerName} (${group.playerNationality})",
+                                    color = Color.Black
+                                )
+                            }
+                        }
+
+                        is ItemUi.PlayerGroup -> TODO()
                     }
                 }
 
-                // Footer avec une image
+                // Footer with image
                 item {
                     Box(
                         modifier = Modifier
@@ -203,7 +197,6 @@ private fun MyScreen2() {
                         )
                     }
                 }
-
             }
         }
     }
