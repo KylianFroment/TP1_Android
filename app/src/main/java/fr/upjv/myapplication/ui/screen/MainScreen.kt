@@ -15,6 +15,8 @@ import androidx.compose.ui.unit.dp
 fun MainScreen(
     onButtonClick: () -> Unit,
     onButton2Click: () -> Unit,
+    onButton3Click: () -> Unit,
+
 
     ) {
     Column(
@@ -41,6 +43,13 @@ fun MainScreen(
                 Text("go to quote screen")
             },
             onClick = { onButton2Click() }
+        )
+
+        Button(
+            content = {
+                Text("go to random player screen")
+            },
+            onClick = { onButton3Click() }
         )
 
     }
